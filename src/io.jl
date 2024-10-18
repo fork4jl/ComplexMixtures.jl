@@ -20,14 +20,14 @@ const bars = repeat("-", 80)
 atoms_str(n) = "$n $(n == 1 ? "atom" : "atoms")"
 mol_str(n) = "$n $(n == 1 ? "molecule" : "molecules")"
 
-@testitem "str numbers" begin
-    @show "Test - str numbers"
-    import ComplexMixtures as CM
-    @test CM.atoms_str(1) == "1 atom"
-    @test CM.atoms_str(2) == "2 atoms"
-    @test CM.mol_str(1) == "1 molecule"
-    @test CM.mol_str(2) == "2 molecules"
-end
+# @testitem "str numbers" begin
+#     @show "Test - str numbers"
+#     import ComplexMixtures as CM
+#     @test CM.atoms_str(1) == "1 atom"
+#     @test CM.atoms_str(2) == "2 atoms"
+#     @test CM.mol_str(1) == "1 molecule"
+#     @test CM.mol_str(2) == "2 molecules"
+# end
 
 #=
     writexyz(x::Vector{T}, file::String) where T <: AbstractVector

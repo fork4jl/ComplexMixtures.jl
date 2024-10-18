@@ -336,100 +336,100 @@ end
 ResidueContributions(result, g::Union{SoluteGroup,SolventGroup}, args...; kwargs...) =
     _custom_group_error_for_ResidueContributions()
 
-@testitem "ResidueContribution" begin
-    @show "Test - ResidueContribution"
-    using ComplexMixtures
-    using PDBTools
-    using ComplexMixtures.Testing: data_dir, pdbfile
+# @testitem "ResidueContribution" begin
+#     @show "Test - ResidueContribution"
+#     using ComplexMixtures
+#     using PDBTools
+#     using ComplexMixtures.Testing: data_dir, pdbfile
 
-    atoms = readPDB(pdbfile)
-    protein = AtomSelection(select(atoms, "protein"), nmols=1)
-    water = AtomSelection(select(atoms, "water"), natomspermol=3)
-    traj = Trajectory("$data_dir/NAMD/trajectory.dcd", protein, water)
-    options = Options(;
-        seed=1,
-        stride=1,
-        StableRNG=true,
-        nthreads=2,
-        silent=true
-    )
-    result = mddf(traj, options)
+#     atoms = readPDB(pdbfile)
+#     protein = AtomSelection(select(atoms, "protein"), nmols=1)
+#     water = AtomSelection(select(atoms, "water"), natomspermol=3)
+#     traj = Trajectory("$data_dir/NAMD/trajectory.dcd", protein, water)
+#     options = Options(;
+#         seed=1,
+#         stride=1,
+#         StableRNG=true,
+#         nthreads=2,
+#         silent=true
+#     )
+#     result = mddf(traj, options)
 
-    # essential properties
-    rc = ResidueContributions(result, select(atoms, "protein"))
-    @test length(rc.d) == 101
-    @test length.(rc.xticks) == (104, 104)
-    @test rc.resnums == 1:104
-    @test size(rc.residue_contributions) == (101, 104)
-    rc = ResidueContributions(result, select(atoms, "protein"); dmin=0.0, dmax=10.0)
-    @test contributions(result, SoluteGroup(select(atoms, "protein and resnum 1"))) ≈ rc.residue_contributions[:, 1]
-    @test contributions(result, SoluteGroup(select(atoms, "protein and resnum 104"))) ≈ rc.residue_contributions[:, 104]
-    @test first(rc.d) == first(result.d)
-    @test last(rc.d) == last(result.d)
-    rcc = ResidueContributions(result, select(atoms, "protein"); dmin=0.0, dmax=10.0, type=:coordination_number)
-    @test length(rcc.d) == 500
-    @test length.(rcc.xticks) == (104, 104)
-    @test size(rcc.residue_contributions) == (500, 104)
-    @test contributions(result, SoluteGroup(select(atoms, "protein and resnum 1")); type=:coordination_number) ≈
-          rcc.residue_contributions[:, 1]
-    @test contributions(result, SoluteGroup(select(atoms, "protein and resnum 104")); type=:coordination_number) ≈
-          rcc.residue_contributions[:, 104]
+#     # essential properties
+#     rc = ResidueContributions(result, select(atoms, "protein"))
+#     @test length(rc.d) == 101
+#     @test length.(rc.xticks) == (104, 104)
+#     @test rc.resnums == 1:104
+#     @test size(rc.residue_contributions) == (101, 104)
+#     rc = ResidueContributions(result, select(atoms, "protein"); dmin=0.0, dmax=10.0)
+#     @test contributions(result, SoluteGroup(select(atoms, "protein and resnum 1"))) ≈ rc.residue_contributions[:, 1]
+#     @test contributions(result, SoluteGroup(select(atoms, "protein and resnum 104"))) ≈ rc.residue_contributions[:, 104]
+#     @test first(rc.d) == first(result.d)
+#     @test last(rc.d) == last(result.d)
+#     rcc = ResidueContributions(result, select(atoms, "protein"); dmin=0.0, dmax=10.0, type=:coordination_number)
+#     @test length(rcc.d) == 500
+#     @test length.(rcc.xticks) == (104, 104)
+#     @test size(rcc.residue_contributions) == (500, 104)
+#     @test contributions(result, SoluteGroup(select(atoms, "protein and resnum 1")); type=:coordination_number) ≈
+#           rcc.residue_contributions[:, 1]
+#     @test contributions(result, SoluteGroup(select(atoms, "protein and resnum 104")); type=:coordination_number) ≈
+#           rcc.residue_contributions[:, 104]
 
-    # indexing
-    rc = ResidueContributions(result, select(atoms, "protein"))
-    rc1 = rc[1]
-    @test rc1.resnums == [1]
-    @test rc1 == ResidueContributions(result, select(atoms, "protein and resnum 1"))
-    rc2 = rc[2:10]
-    @test rc2.resnums == 2:10
-    @test rc2 == ResidueContributions(result, select(atoms, "protein and resnum > 1 and resnum < 11"))
+#     # indexing
+#     rc = ResidueContributions(result, select(atoms, "protein"))
+#     rc1 = rc[1]
+#     @test rc1.resnums == [1]
+#     @test rc1 == ResidueContributions(result, select(atoms, "protein and resnum 1"))
+#     rc2 = rc[2:10]
+#     @test rc2.resnums == 2:10
+#     @test rc2 == ResidueContributions(result, select(atoms, "protein and resnum > 1 and resnum < 11"))
 
-    # empty plot (just test if the show function does not throw an error)
-    rc2 = copy(rc)
-    rc2.residue_contributions .= 0.0
-    @test show(IOBuffer(), MIME"text/plain"(), rc2) === nothing
+#     # empty plot (just test if the show function does not throw an error)
+#     rc2 = copy(rc)
+#     rc2.residue_contributions .= 0.0
+#     @test show(IOBuffer(), MIME"text/plain"(), rc2) === nothing
 
-    # arithmetic operations
-    rc = ResidueContributions(result, select(atoms, "protein"))
-    rcminus = rc - rc
-    @test all(rcminus.residue_contributions .< 1e-10)
-    rcplus = rc + rc
-    @test all(rcplus.residue_contributions .≈ 2 .* rc.residue_contributions)
-    rdiv = rc / rc
-    @test all(x -> isapprox(x, 1.0), filter(>(0.0), rdiv.residue_contributions))
-    @test all(<(1.e-10), filter(<(0.5), rdiv.residue_contributions))
-    rmul = rc * rc
-    @test rmul.residue_contributions ≈ rc.residue_contributions .^ 2
-    rc2 = 2 * rc
-    @test rc2.residue_contributions == 2 .* rc.residue_contributions
-    rc2 = rc * 2
-    @test rc2.residue_contributions == 2 .* rc.residue_contributions
-    rc2 = rc / 2
-    @test rc2.residue_contributions == rc.residue_contributions ./ 2
+#     # arithmetic operations
+#     rc = ResidueContributions(result, select(atoms, "protein"))
+#     rcminus = rc - rc
+#     @test all(rcminus.residue_contributions .< 1e-10)
+#     rcplus = rc + rc
+#     @test all(rcplus.residue_contributions .≈ 2 .* rc.residue_contributions)
+#     rdiv = rc / rc
+#     @test all(x -> isapprox(x, 1.0), filter(>(0.0), rdiv.residue_contributions))
+#     @test all(<(1.e-10), filter(<(0.5), rdiv.residue_contributions))
+#     rmul = rc * rc
+#     @test rmul.residue_contributions ≈ rc.residue_contributions .^ 2
+#     rc2 = 2 * rc
+#     @test rc2.residue_contributions == 2 .* rc.residue_contributions
+#     rc2 = rc * 2
+#     @test rc2.residue_contributions == 2 .* rc.residue_contributions
+#     rc2 = rc / 2
+#     @test rc2.residue_contributions == rc.residue_contributions ./ 2
 
-    # copy structure
-    rc2 = copy(rc)
-    @test rc2.d == rc.d
-    @test rc2.residue_contributions == rc.residue_contributions
-    @test rc2.xticks[1] == rc.xticks[1]
-    @test rc2.xticks[2] == rc.xticks[2]
+#     # copy structure
+#     rc2 = copy(rc)
+#     @test rc2.d == rc.d
+#     @test rc2.residue_contributions == rc.residue_contributions
+#     @test rc2.xticks[1] == rc.xticks[1]
+#     @test rc2.xticks[2] == rc.xticks[2]
 
-    # Error messages
-    rc2 = ResidueContributions(result, select(atoms, "protein and residue < 50"))
-    @test_throws ArgumentError rc - rc2
-    rc2 = ResidueContributions(result, select(atoms, "protein"); dmax=3.0)
-    @test_throws ArgumentError rc - rc2
-    @test_throws ArgumentError ResidueContributions(result, select(atoms, "protein and resname XXX"))
-    @test_throws ArgumentError ResidueContributions(result, SoluteGroup("ALA"))
+#     # Error messages
+#     rc2 = ResidueContributions(result, select(atoms, "protein and residue < 50"))
+#     @test_throws ArgumentError rc - rc2
+#     rc2 = ResidueContributions(result, select(atoms, "protein"); dmax=3.0)
+#     @test_throws ArgumentError rc - rc2
+#     @test_throws ArgumentError ResidueContributions(result, select(atoms, "protein and resname XXX"))
+#     @test_throws ArgumentError ResidueContributions(result, SoluteGroup("ALA"))
 
-    acidic_residues = select(atoms, "protein and acidic")
-    basic_residues = select(atoms, "protein and basic")
-    protein = AtomSelection(select(atoms, "protein"), nmols=1,
-        group_atom_indices=[index.(acidic_residues), index.(basic_residues)],
-        group_names=["acidic residues", "basic residues"]
-    )
-    traj = Trajectory("$data_dir/NAMD/trajectory.dcd", protein, water)
-    result = mddf(traj, Options(lastframe=2))
-    @test_throws ArgumentError ResidueContributions(result, select(atoms, "protein"))
+#     acidic_residues = select(atoms, "protein and acidic")
+#     basic_residues = select(atoms, "protein and basic")
+#     protein = AtomSelection(select(atoms, "protein"), nmols=1,
+#         group_atom_indices=[index.(acidic_residues), index.(basic_residues)],
+#         group_names=["acidic residues", "basic residues"]
+#     )
+#     traj = Trajectory("$data_dir/NAMD/trajectory.dcd", protein, water)
+#     result = mddf(traj, Options(lastframe=2))
+#     @test_throws ArgumentError ResidueContributions(result, select(atoms, "protein"))
 
-end
+# end

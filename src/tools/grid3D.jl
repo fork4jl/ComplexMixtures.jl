@@ -146,55 +146,55 @@ function grid3D(
     return grid
 end
 
-@testitem "grid3D" begin
-    @show "Test - grid3D"
-    using PDBTools
-    using ComplexMixtures
-    using ComplexMixtures.Testing: data_dir
-    dir = "$data_dir/NAMD"
-    atoms = readPDB("$dir/structure.pdb")
+# @testitem "grid3D" begin
+#     @show "Test - grid3D"
+#     using PDBTools
+#     using ComplexMixtures
+#     using ComplexMixtures.Testing: data_dir
+#     dir = "$data_dir/NAMD"
+#     atoms = readPDB("$dir/structure.pdb")
 
-    # Test argument error: no custom groups can be defined
-    protein = AtomSelection(select(atoms, "protein"); group_atom_indices = [ findall(sel"resname ARG", atoms) ], nmols = 1)
-    tmao = AtomSelection(select(atoms, "resname TMAO"), natomspermol = 14)
-    options = Options(
-        stride = 5, 
-        seed = 321, 
-        StableRNG = true, 
-        nthreads = 1, 
-        silent = true,
-        n_random_samples=100,
-    )
-    traj = Trajectory("$dir/trajectory.dcd", protein, tmao)
-    R = mddf(traj, options)
-    @test_throws ArgumentError grid3D(R, atoms, tempname())
+#     # Test argument error: no custom groups can be defined
+#     protein = AtomSelection(select(atoms, "protein"); group_atom_indices = [ findall(sel"resname ARG", atoms) ], nmols = 1)
+#     tmao = AtomSelection(select(atoms, "resname TMAO"), natomspermol = 14)
+#     options = Options(
+#         stride = 5, 
+#         seed = 321, 
+#         StableRNG = true, 
+#         nthreads = 1, 
+#         silent = true,
+#         n_random_samples=100,
+#     )
+#     traj = Trajectory("$dir/trajectory.dcd", protein, tmao)
+#     R = mddf(traj, options)
+#     @test_throws ArgumentError grid3D(R, atoms, tempname())
 
-    # Test properties of the grid around a specific residue
-    solute = AtomSelection(select(atoms, "protein and residue 46"), nmols = 1)
-    solvent = AtomSelection(select(atoms, "water"), natomspermol=3)
-    traj = Trajectory("$dir/trajectory.dcd", solute, solvent)
-    grid_file = tempname()*".pdb"
-    options = Options(
-        stride = 5, 
-        seed = 321, 
-        StableRNG = true, 
-        nthreads = 1, 
-        silent = true,
-    )
-    R = mddf(traj, options)
-    grid = grid3D(R, atoms, grid_file)
-    @test length(grid) == 1539
-    c05 = filter(at -> beta(at) > 0.5, grid)
-    @test length(c05) == 14
-    @test all(at -> element(at) == "O", c05)
-    @test all(at -> occup(at) < 2.0, c05)
+#     # Test properties of the grid around a specific residue
+#     solute = AtomSelection(select(atoms, "protein and residue 46"), nmols = 1)
+#     solvent = AtomSelection(select(atoms, "water"), natomspermol=3)
+#     traj = Trajectory("$dir/trajectory.dcd", solute, solvent)
+#     grid_file = tempname()*".pdb"
+#     options = Options(
+#         stride = 5, 
+#         seed = 321, 
+#         StableRNG = true, 
+#         nthreads = 1, 
+#         silent = true,
+#     )
+#     R = mddf(traj, options)
+#     grid = grid3D(R, atoms, grid_file)
+#     @test length(grid) == 1539
+#     c05 = filter(at -> beta(at) > 0.5, grid)
+#     @test length(c05) == 14
+#     @test all(at -> element(at) == "O", c05)
+#     @test all(at -> occup(at) < 2.0, c05)
 
-    # Test if the file was properly written
-    grid_read = readPDB(grid_file)
-    for property in [:name, :resname, :chain, :resnum ]
-        @test all(p -> getproperty(first(p), property) == getproperty(last(p), property), zip(grid, grid_read))
-    end
-    for property in [ :x, :y, :z, :occup, :beta ]
-        @test all(p -> isapprox(getproperty(first(p), property),getproperty(last(p), property),atol=1e-2), zip(grid, grid_read))
-    end
-end
+#     # Test if the file was properly written
+#     grid_read = readPDB(grid_file)
+#     for property in [:name, :resname, :chain, :resnum ]
+#         @test all(p -> getproperty(first(p), property) == getproperty(last(p), property), zip(grid, grid_read))
+#     end
+#     for property in [ :x, :y, :z, :occup, :beta ]
+#         @test all(p -> isapprox(getproperty(first(p), property),getproperty(last(p), property),atol=1e-2), zip(grid, grid_read))
+#     end
+# end

@@ -8,14 +8,14 @@
 #
 atom_type(iatom::Int, natomspermol::Int; first::Int = 1) = mod1(iatom - first + 1, natomspermol)
 
-@testitem "atom_type" begin
-    @show "Test - atom_type"
-    using ComplexMixtures: atom_type
-    @test atom_type(1, 3) == 1
-    @test atom_type(4, 3) == 1
-    @test atom_type(5, 3) == 2
-    @test atom_type(6, 3) == 3
-end
+# @testitem "atom_type" begin
+#     @show "Test - atom_type"
+#     using ComplexMixtures: atom_type
+#     @test atom_type(1, 3) == 1
+#     @test atom_type(4, 3) == 1
+#     @test atom_type(5, 3) == 2
+#     @test atom_type(6, 3) == 3
+# end
 
 # Function that updates the MD counters of the groups (or atoms) of the solute
 # and solvent

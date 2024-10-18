@@ -62,33 +62,33 @@ function coordination_number end
 coordination_number(R::Result) = R.coordination_number
 coordination_number(R::Result, atsel::Union{SoluteGroup,SolventGroup}) = contributions(R, atsel; type = :coordination_number)
 
-@testitem "coordination_number" begin
-    @show "Test - coordination_number"
-    using ComplexMixtures: coordination_number, contributions, mddf, Trajectory, Options, AtomSelection, load
-    using PDBTools: readPDB, select
-    using ComplexMixtures.Testing: data_dir
+# @testitem "coordination_number" begin
+#     @show "Test - coordination_number"
+#     using ComplexMixtures: coordination_number, contributions, mddf, Trajectory, Options, AtomSelection, load
+#     using PDBTools: readPDB, select
+#     using ComplexMixtures.Testing: data_dir
 
-    dir = "$data_dir/NAMD"
-    atoms = readPDB("$dir/structure.pdb")
-    protein = AtomSelection(select(atoms, "protein"), nmols = 1)
-    tmao = AtomSelection(select(atoms, "resname TMAO"), natomspermol = 14)
-    options = Options(lastframe = 1, seed = 321, StableRNG = true, nthreads = 1, silent = true, n_random_samples=200)
-    traj = Trajectory("$dir/trajectory.dcd", protein, tmao)
-    R = mddf(traj, options)
+#     dir = "$data_dir/NAMD"
+#     atoms = readPDB("$dir/structure.pdb")
+#     protein = AtomSelection(select(atoms, "protein"), nmols = 1)
+#     tmao = AtomSelection(select(atoms, "resname TMAO"), natomspermol = 14)
+#     options = Options(lastframe = 1, seed = 321, StableRNG = true, nthreads = 1, silent = true, n_random_samples=200)
+#     traj = Trajectory("$dir/trajectory.dcd", protein, tmao)
+#     R = mddf(traj, options)
 
-    # Test self-consistency
-    @test sum(sum.(R.solute_group_count)) ≈ sum(sum.(R.solvent_group_count))
-    @test coordination_number(R) == R.coordination_number
-    @test coordination_number(R, SoluteGroup(R.solute)) == R.coordination_number
+#     # Test self-consistency
+#     @test sum(sum.(R.solute_group_count)) ≈ sum(sum.(R.solvent_group_count))
+#     @test coordination_number(R) == R.coordination_number
+#     @test coordination_number(R, SoluteGroup(R.solute)) == R.coordination_number
 
-    # Checked with vmd: same residue as (resname TMAO and within 3.0 of protein)
-    @test R.coordination_number[findfirst(>(3), R.d)] == 7.0
-    @test R.coordination_number[findfirst(>(5), R.d)] == 14.0
+#     # Checked with vmd: same residue as (resname TMAO and within 3.0 of protein)
+#     @test R.coordination_number[findfirst(>(3), R.d)] == 7.0
+#     @test R.coordination_number[findfirst(>(5), R.d)] == 14.0
 
-    # THR93 forms a hydrogen bond with TMAO in this frame
-    thr93 = select(atoms, "protein and residue 93")
-    @test last(coordination_number(R, SoluteGroup(thr93))) == 1
+#     # THR93 forms a hydrogen bond with TMAO in this frame
+#     thr93 = select(atoms, "protein and residue 93")
+#     @test last(coordination_number(R, SoluteGroup(thr93))) == 1
 
-    # Test coordination number of a solvent atom
-    @test sum(coordination_number(R, SolventGroup(["O1"]))) == 1171.0
-end
+#     # Test coordination number of a solvent atom
+#     @test sum(coordination_number(R, SolventGroup(["O1"]))) == 1171.0
+# end

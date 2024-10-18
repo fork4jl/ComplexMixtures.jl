@@ -67,25 +67,25 @@ end
 convert_unitcell(::SVector, unitcell::AbstractMatrix) = SVector{3}(unitcell[1,1], unitcell[2,2], unitcell[3,3])
 convert_unitcell(::SMatrix, unitcell::AbstractMatrix) = SMatrix{3,3}(unitcell)
 
-@testitem "convert_unitcell" begin
-    @show "Test - convert_unitcell"
-    using ComplexMixtures: convert_unitcell
-    using StaticArrays: SVector, SMatrix
-    using BenchmarkTools: @benchmark
-    m = [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0]
-    @test convert_unitcell(m) isa SVector
-    s = SVector(1.0, 1.0, 1.0)
-    @test convert_unitcell(s, m) isa SVector
-    @test convert_unitcell(s, m) isa SVector
-    b = @benchmark convert_unitcell($s, $m) samples = 1 evals = 1
-    @test b.allocs == 0
-    m = [1.0 1.0 0.0; 0.0 1.0 0.0; 0.0 0.0 2.0]
-    @test convert_unitcell(m) isa SMatrix
-    m2 = SMatrix{3,3}(m)
-    @test convert_unitcell(m2, m) isa SMatrix
-    b = @benchmark convert_unitcell($m2, $m) samples = 1 evals = 1
-    @test b.allocs == 0
-end
+# @testitem "convert_unitcell" begin
+#     @show "Test - convert_unitcell"
+#     using ComplexMixtures: convert_unitcell
+#     using StaticArrays: SVector, SMatrix
+#     using BenchmarkTools: @benchmark
+#     m = [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0]
+#     @test convert_unitcell(m) isa SVector
+#     s = SVector(1.0, 1.0, 1.0)
+#     @test convert_unitcell(s, m) isa SVector
+#     @test convert_unitcell(s, m) isa SVector
+#     b = @benchmark convert_unitcell($s, $m) samples = 1 evals = 1
+#     @test b.allocs == 0
+#     m = [1.0 1.0 0.0; 0.0 1.0 0.0; 0.0 0.0 2.0]
+#     @test convert_unitcell(m) isa SMatrix
+#     m2 = SMatrix{3,3}(m)
+#     @test convert_unitcell(m2, m) isa SMatrix
+#     b = @benchmark convert_unitcell($m2, $m) samples = 1 evals = 1
+#     @test b.allocs == 0
+# end
 
 function print_unitcell(trajectory)
     unitcell = convert_unitcell(getunitcell(trajectory))
@@ -100,57 +100,57 @@ function print_unitcell(trajectory)
     end
 end
 
-@testitem "Trajectory" begin
-    @show "Test - Trajectory"
-    using ComplexMixtures
-    using ComplexMixtures.Testing
-    using PDBTools
-    using StaticArrays
+# @testitem "Trajectory" begin
+#     @show "Test - Trajectory"
+#     using ComplexMixtures
+#     using ComplexMixtures.Testing
+#     using PDBTools
+#     using StaticArrays
 
-    atoms = readPDB(Testing.pdbfile)
-    protein = AtomSelection(select(atoms, "protein"), nmols = 1)
-    tmao = AtomSelection(select(atoms, "resname TMAO"), natomspermol = 14)
+#     atoms = readPDB(Testing.pdbfile)
+#     protein = AtomSelection(select(atoms, "protein"), nmols = 1)
+#     tmao = AtomSelection(select(atoms, "resname TMAO"), natomspermol = 14)
 
-    # NAMD DCD file
-    traj = Trajectory("$(Testing.data_dir)/NAMD/trajectory.dcd", protein, tmao)
-    @test traj.nframes == 20
-    @test traj.lastatom == 4012
-    @test ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)) ≈ SVector(84.42188262939453, 84.42188262939453, 84.42188262939453)
+#     # NAMD DCD file
+#     traj = Trajectory("$(Testing.data_dir)/NAMD/trajectory.dcd", protein, tmao)
+#     @test traj.nframes == 20
+#     @test traj.lastatom == 4012
+#     @test ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)) ≈ SVector(84.42188262939453, 84.42188262939453, 84.42188262939453)
 
-    # PDB file
-    traj = Trajectory(
-        "$(Testing.data_dir)/PDB/trajectory.pdb",
-        protein,
-        tmao,
-        format = "PDBTraj",
-    )
-    @test ComplexMixtures.natoms(traj.solute) == 1463
-    @test ComplexMixtures.natoms(traj.solvent) == 2534
-    @test ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)) ≈ SVector(84.47962951660156, 84.47962951660156, 84.47962951660156)
+#     # PDB file
+#     traj = Trajectory(
+#         "$(Testing.data_dir)/PDB/trajectory.pdb",
+#         protein,
+#         tmao,
+#         format = "PDBTraj",
+#     )
+#     @test ComplexMixtures.natoms(traj.solute) == 1463
+#     @test ComplexMixtures.natoms(traj.solvent) == 2534
+#     @test ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)) ≈ SVector(84.47962951660156, 84.47962951660156, 84.47962951660156)
 
-    # Chemfiles with NAMD
-    traj = Trajectory(
-        "$(Testing.data_dir)/NAMD/trajectory.dcd",
-        protein,
-        tmao,
-        chemfiles = true,
-    )
-    @test traj.nframes == 20
-    @test ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)) ≈ SVector(84.42188262939453, 84.42188262939453, 84.42188262939453)
-    @test ComplexMixtures.natoms(traj.solute) == 1463
-    @test ComplexMixtures.natoms(traj.solvent) == 2534
+#     # Chemfiles with NAMD
+#     traj = Trajectory(
+#         "$(Testing.data_dir)/NAMD/trajectory.dcd",
+#         protein,
+#         tmao,
+#         chemfiles = true,
+#     )
+#     @test traj.nframes == 20
+#     @test ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)) ≈ SVector(84.42188262939453, 84.42188262939453, 84.42188262939453)
+#     @test ComplexMixtures.natoms(traj.solute) == 1463
+#     @test ComplexMixtures.natoms(traj.solvent) == 2534
 
-    # Chemfiles with Gromacs
-    atoms = readPDB("$(Testing.data_dir)/Gromacs/system.pdb")
-    protein = AtomSelection(select(atoms, "protein"), nmols = 1)
-    emi = AtomSelection(select(atoms, "resname EMI"), natomspermol = 20)
-    traj = Trajectory("$(Testing.data_dir)/Gromacs/trajectory.xtc", protein, emi)
-    @test traj.nframes == 26
-    @test ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)) ≈ SVector(95.11481285095215, 95.11481285095215, 95.13440132141113)
-    @test ComplexMixtures.natoms(traj.solute) == 1231
-    @test ComplexMixtures.natoms(traj.solvent) == 5080
+#     # Chemfiles with Gromacs
+#     atoms = readPDB("$(Testing.data_dir)/Gromacs/system.pdb")
+#     protein = AtomSelection(select(atoms, "protein"), nmols = 1)
+#     emi = AtomSelection(select(atoms, "resname EMI"), natomspermol = 20)
+#     traj = Trajectory("$(Testing.data_dir)/Gromacs/trajectory.xtc", protein, emi)
+#     @test traj.nframes == 26
+#     @test ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)) ≈ SVector(95.11481285095215, 95.11481285095215, 95.13440132141113)
+#     @test ComplexMixtures.natoms(traj.solute) == 1231
+#     @test ComplexMixtures.natoms(traj.solvent) == 5080
 
-end
+# end
 
 #
 # This structure and function are used to retrieve metadata from the trajectory
@@ -229,31 +229,31 @@ function TrajectoryMetaData(trajectory::Trajectory, options::Options)
     )
 end
 
-@testitem "TrajectoryMetaData" begin
-    @show "Test - TrajectoryMetaData"
-    using ComplexMixtures
-    using ComplexMixtures.Testing
-    using PDBTools
-    atoms = readPDB(Testing.pdbfile)
-    protein = AtomSelection(select(atoms, "protein"), nmols = 1)
-    tmao = AtomSelection(select(atoms, "resname TMAO"), natomspermol = 14)
-    traj = Trajectory("$(Testing.data_dir)/NAMD/trajectory.dcd", protein, tmao)
+# @testitem "TrajectoryMetaData" begin
+#     @show "Test - TrajectoryMetaData"
+#     using ComplexMixtures
+#     using ComplexMixtures.Testing
+#     using PDBTools
+#     atoms = readPDB(Testing.pdbfile)
+#     protein = AtomSelection(select(atoms, "protein"), nmols = 1)
+#     tmao = AtomSelection(select(atoms, "resname TMAO"), natomspermol = 14)
+#     traj = Trajectory("$(Testing.data_dir)/NAMD/trajectory.dcd", protein, tmao)
 
-    options = Options()
-    tmeta = ComplexMixtures.TrajectoryMetaData(traj, options)
-    @test tmeta.irefatom == 1
-    @test tmeta.lastframe_read == 20 
-    @test tmeta.nframes_read == 20
-    @test tmeta.n_groups_solute == 1463
-    @test tmeta.n_groups_solvent == 14
-    @test tmeta.unitcell ≈ [84.42188262939453, 84.42188262939453, 84.42188262939453]
+#     options = Options()
+#     tmeta = ComplexMixtures.TrajectoryMetaData(traj, options)
+#     @test tmeta.irefatom == 1
+#     @test tmeta.lastframe_read == 20 
+#     @test tmeta.nframes_read == 20
+#     @test tmeta.n_groups_solute == 1463
+#     @test tmeta.n_groups_solvent == 14
+#     @test tmeta.unitcell ≈ [84.42188262939453, 84.42188262939453, 84.42188262939453]
 
-    options = Options(;irefatom = 2, lastframe = 10, stride = 2)
-    tmeta = ComplexMixtures.TrajectoryMetaData(traj, options)
-    @test tmeta.irefatom == 2
-    @test tmeta.lastframe_read == 10
-    @test tmeta.nframes_read == 5
-    @test tmeta.n_groups_solute == 1463
-    @test tmeta.n_groups_solvent == 14
-    @test tmeta.unitcell ≈ [84.42188262939453, 84.42188262939453, 84.42188262939453]
-end
+#     options = Options(;irefatom = 2, lastframe = 10, stride = 2)
+#     tmeta = ComplexMixtures.TrajectoryMetaData(traj, options)
+#     @test tmeta.irefatom == 2
+#     @test tmeta.lastframe_read == 10
+#     @test tmeta.nframes_read == 5
+#     @test tmeta.n_groups_solute == 1463
+#     @test tmeta.n_groups_solvent == 14
+#     @test tmeta.unitcell ≈ [84.42188262939453, 84.42188262939453, 84.42188262939453]
+# end

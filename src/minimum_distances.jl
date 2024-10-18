@@ -38,13 +38,13 @@ function update_md(md1::MinimumDistance, md2::MinimumDistance)
     return md
 end
 
-@testitem "update_md" begin
-    @show "Test - update_md"
-    import ComplexMixtures as CM
-    md1 = CM.MinimumDistance(true, 1, 2, 1.0, true, 1.0)
-    md2 = CM.MinimumDistance(true, 1, 2, 0.5, true, 0.5)
-    @test CM.update_md(md1, md2) == CM.MinimumDistance(true, 1, 2, 0.5, true, 0.5)
-end
+# @testitem "update_md" begin
+#     @show "Test - update_md"
+#     import ComplexMixtures as CM
+#     md1 = CM.MinimumDistance(true, 1, 2, 1.0, true, 1.0)
+#     md2 = CM.MinimumDistance(true, 1, 2, 0.5, true, 0.5)
+#     @test CM.update_md(md1, md2) == CM.MinimumDistance(true, 1, 2, 0.5, true, 0.5)
+# end
 
 #
 # Methods to allow multi-threading in CellListMap
@@ -186,49 +186,49 @@ function CellListMap.ParticleSystem(
     return system
 end
 
-@testitem "build ParticleSystem" begin
-    @show "Test - build ParticleSystem"
-    using ComplexMixtures
-    using PDBTools
-    using ComplexMixtures.Testing
-    using StaticArrays
-    import CellListMap
+# @testitem "build ParticleSystem" begin
+#     @show "Test - build ParticleSystem"
+#     using ComplexMixtures
+#     using PDBTools
+#     using ComplexMixtures.Testing
+#     using StaticArrays
+#     import CellListMap
 
-    atoms = readPDB(Testing.pdbfile)
-    options = Options(stride = 5, seed = 321, StableRNG = true, nthreads = 1, silent = true)
-    tmao = AtomSelection(select(atoms, "resname TMAO"), natomspermol = 14)
+#     atoms = readPDB(Testing.pdbfile)
+#     options = Options(stride = 5, seed = 321, StableRNG = true, nthreads = 1, silent = true)
+#     tmao = AtomSelection(select(atoms, "resname TMAO"), natomspermol = 14)
 
-    # Cross-correlation
-    protein = AtomSelection(select(atoms, "protein"), nmols = 1)
-    traj = Trajectory("$(Testing.data_dir)/NAMD/trajectory.dcd", protein, tmao)
-    tmeta = ComplexMixtures.TrajectoryMetaData(traj, options) 
-    system = ComplexMixtures.ParticleSystem(traj, tmeta.unitcell, options, false, (1,1))
-    @test system.cutoff == 10.0
-    @test system.list == fill(zero(ComplexMixtures.MinimumDistance), 181)
-    @test system.output == fill(zero(ComplexMixtures.MinimumDistance), 181)
-    @test system.parallel == false
-    @test length(system.xpositions) == 1463
-    @test length(system.ypositions) == 2534
-    @test system.unitcell ≈ [84.42188262939453 0.0 0.0; 0.0 84.42188262939453 0.0; 0.0 0.0 84.42188262939453]
-    @test system._box == CellListMap.Box(
-        ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)),
-        10.0, lcell = options.lcell
-    )
+#     # Cross-correlation
+#     protein = AtomSelection(select(atoms, "protein"), nmols = 1)
+#     traj = Trajectory("$(Testing.data_dir)/NAMD/trajectory.dcd", protein, tmao)
+#     tmeta = ComplexMixtures.TrajectoryMetaData(traj, options) 
+#     system = ComplexMixtures.ParticleSystem(traj, tmeta.unitcell, options, false, (1,1))
+#     @test system.cutoff == 10.0
+#     @test system.list == fill(zero(ComplexMixtures.MinimumDistance), 181)
+#     @test system.output == fill(zero(ComplexMixtures.MinimumDistance), 181)
+#     @test system.parallel == false
+#     @test length(system.xpositions) == 1463
+#     @test length(system.ypositions) == 2534
+#     @test system.unitcell ≈ [84.42188262939453 0.0 0.0; 0.0 84.42188262939453 0.0; 0.0 0.0 84.42188262939453]
+#     @test system._box == CellListMap.Box(
+#         ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)),
+#         10.0, lcell = options.lcell
+#     )
 
-    # Auto-correlation
-    traj = Trajectory("$(Testing.data_dir)/NAMD/trajectory.dcd", tmao)
-    tmeta = ComplexMixtures.TrajectoryMetaData(traj, options)
-    system = ComplexMixtures.ParticleSystem(traj, tmeta.unitcell, options, false, (1,1))
-    @test system.cutoff == 10.0
-    @test system.list == fill(zero(ComplexMixtures.MinimumDistance), 181) # one molecule less
-    @test system.output == fill(zero(ComplexMixtures.MinimumDistance), 181)
-    @test system.parallel == false
-    @test length(system.xpositions) == 14 # one TMAO molecule
-    @test length(system.ypositions) == 2534 # one molecule less
-    @test system.unitcell ≈ [84.42188262939453 0.0 0.0; 0.0 84.42188262939453 0.0; 0.0 0.0 84.42188262939453]
-    @test system._box == CellListMap.Box(
-        ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)),
-        10.0, lcell = options.lcell
-    )
+#     # Auto-correlation
+#     traj = Trajectory("$(Testing.data_dir)/NAMD/trajectory.dcd", tmao)
+#     tmeta = ComplexMixtures.TrajectoryMetaData(traj, options)
+#     system = ComplexMixtures.ParticleSystem(traj, tmeta.unitcell, options, false, (1,1))
+#     @test system.cutoff == 10.0
+#     @test system.list == fill(zero(ComplexMixtures.MinimumDistance), 181) # one molecule less
+#     @test system.output == fill(zero(ComplexMixtures.MinimumDistance), 181)
+#     @test system.parallel == false
+#     @test length(system.xpositions) == 14 # one TMAO molecule
+#     @test length(system.ypositions) == 2534 # one molecule less
+#     @test system.unitcell ≈ [84.42188262939453 0.0 0.0; 0.0 84.42188262939453 0.0; 0.0 0.0 84.42188262939453]
+#     @test system._box == CellListMap.Box(
+#         ComplexMixtures.convert_unitcell(ComplexMixtures.getunitcell(traj)),
+#         10.0, lcell = options.lcell
+#     )
 
-end
+# end

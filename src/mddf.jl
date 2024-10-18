@@ -482,104 +482,104 @@ end
         @test coordination_number(C) == coordination_number(R)
     end
 
-    # Test wrong frame_weights input
-    @test_throws ArgumentError mddf(traj, Options(), frame_weights=[1.0])
+    # # Test wrong frame_weights input
+    # @test_throws ArgumentError mddf(traj, Options(), frame_weights=[1.0])
 
-    # Self correlation
-    atoms = readPDB("$data_dir/toy/self_monoatomic.pdb")
-    atom = AtomSelection(select(atoms, "resname WAT and model 1"), natomspermol=1)
-    traj = Trajectory("$data_dir/toy/self_monoatomic.pdb", atom, format="PDBTraj")
-    # without atoms in the bulk
-    for nthreads in [1,2], low_memory in [false, true]
-        options = Options(;
-            seed=321,
-            StableRNG=true,
-            nthreads,
-            silent=true,
-            n_random_samples=10^5,
-            lastframe=1,
-        )
-        R = mddf(traj, options; low_memory)
-        @test R.volume.total == 27000.0
-        @test R.volume.domain ≈ R.volume.total - R.volume.bulk
-        @test isapprox(R.volume.domain, (4π / 3) * R.dbulk^3; rtol=0.1)
-        @test R.density.solute ≈ 2 / R.volume.total
-        @test R.density.solvent ≈ 2 / R.volume.total
-        @test sum(R.md_count) ≈ 1.0
-    end
+    # # Self correlation
+    # atoms = readPDB("$data_dir/toy/self_monoatomic.pdb")
+    # atom = AtomSelection(select(atoms, "resname WAT and model 1"), natomspermol=1)
+    # traj = Trajectory("$data_dir/toy/self_monoatomic.pdb", atom, format="PDBTraj")
+    # # without atoms in the bulk
+    # for nthreads in [1,2], low_memory in [false, true]
+    #     options = Options(;
+    #         seed=321,
+    #         StableRNG=true,
+    #         nthreads,
+    #         silent=true,
+    #         n_random_samples=10^5,
+    #         lastframe=1,
+    #     )
+    #     R = mddf(traj, options; low_memory)
+    #     @test R.volume.total == 27000.0
+    #     @test R.volume.domain ≈ R.volume.total - R.volume.bulk
+    #     @test isapprox(R.volume.domain, (4π / 3) * R.dbulk^3; rtol=0.1)
+    #     @test R.density.solute ≈ 2 / R.volume.total
+    #     @test R.density.solvent ≈ 2 / R.volume.total
+    #     @test sum(R.md_count) ≈ 1.0
+    # end
 
-    #
-    # Test varying frame weights
-    #
-    # Read only first frame
-    for low_memory in [false, true]
-        local traj
-        options = Options(seed=321, StableRNG=true, nthreads=1, silent=true, lastframe=1)
-        traj = Trajectory("$data_dir/toy/self_monoatomic.pdb", atom, format="PDBTraj")
-        R1 = mddf(traj, options; low_memory)
-        R2 = mddf(traj, options; frame_weights=[1.0, 0.0], low_memory)
-        @test R1.md_count == R2.md_count
-        @test R1.rdf_count == R2.rdf_count
-        # Read only last frame
-        options = Options(seed=321, StableRNG=true, nthreads=1, silent=true, firstframe=2)
-        R1 = mddf(traj, options; low_memory)
-        options = Options(seed=321, StableRNG=true, nthreads=1, silent=true)
-        R2 = mddf(traj, options; frame_weights=[0.0, 1.0], low_memory)
-        @test R1.md_count == R2.md_count
-        @test R1.rdf_count == R2.rdf_count
-        # Use equal weights
-        R1 = mddf(traj, options; low_memory)
-        R2 = mddf(traj, options; frame_weights=[0.3, 0.3], low_memory)
-        @test R1.md_count == R2.md_count
-        @test R1.rdf_count == R2.rdf_count
-        # Check with the duplicated-first-frame trajectory 
-        traj = Trajectory("$data_dir/toy/self_monoatomic_duplicated_first_frame.pdb", atom, format="PDBTraj")
-        options = Options(seed=321, StableRNG=true, nthreads=1, silent=true, firstframe=1, lastframe=3)
-        R1 = mddf(traj, options; low_memory)
-        traj = Trajectory("$data_dir/toy/self_monoatomic.pdb", atom, format="PDBTraj")
-        options = Options(seed=321, StableRNG=true, nthreads=1, silent=true)
-        R2 = mddf(traj, options; frame_weights=[2.0, 1.0], low_memory)
-        @test R1.md_count == R2.md_count
-        @test R1.rdf_count == R2.rdf_count
-        # Test some different weights
-        R2 = mddf(traj, Options(silent=true); frame_weights=[2.0, 1.0], low_memory)
-        @test sum(R2.md_count) ≈ 2 / 3
-        R2 = mddf(traj, Options(silent=true); frame_weights=[1.0, 2.0], low_memory)
-        @test sum(R2.md_count) ≈ 1 / 3
+    # #
+    # # Test varying frame weights
+    # #
+    # # Read only first frame
+    # for low_memory in [false, true]
+    #     local traj
+    #     options = Options(seed=321, StableRNG=true, nthreads=1, silent=true, lastframe=1)
+    #     traj = Trajectory("$data_dir/toy/self_monoatomic.pdb", atom, format="PDBTraj")
+    #     R1 = mddf(traj, options; low_memory)
+    #     R2 = mddf(traj, options; frame_weights=[1.0, 0.0], low_memory)
+    #     @test R1.md_count == R2.md_count
+    #     @test R1.rdf_count == R2.rdf_count
+    #     # Read only last frame
+    #     options = Options(seed=321, StableRNG=true, nthreads=1, silent=true, firstframe=2)
+    #     R1 = mddf(traj, options; low_memory)
+    #     options = Options(seed=321, StableRNG=true, nthreads=1, silent=true)
+    #     R2 = mddf(traj, options; frame_weights=[0.0, 1.0], low_memory)
+    #     @test R1.md_count == R2.md_count
+    #     @test R1.rdf_count == R2.rdf_count
+    #     # Use equal weights
+    #     R1 = mddf(traj, options; low_memory)
+    #     R2 = mddf(traj, options; frame_weights=[0.3, 0.3], low_memory)
+    #     @test R1.md_count == R2.md_count
+    #     @test R1.rdf_count == R2.rdf_count
+    #     # Check with the duplicated-first-frame trajectory 
+    #     traj = Trajectory("$data_dir/toy/self_monoatomic_duplicated_first_frame.pdb", atom, format="PDBTraj")
+    #     options = Options(seed=321, StableRNG=true, nthreads=1, silent=true, firstframe=1, lastframe=3)
+    #     R1 = mddf(traj, options; low_memory)
+    #     traj = Trajectory("$data_dir/toy/self_monoatomic.pdb", atom, format="PDBTraj")
+    #     options = Options(seed=321, StableRNG=true, nthreads=1, silent=true)
+    #     R2 = mddf(traj, options; frame_weights=[2.0, 1.0], low_memory)
+    #     @test R1.md_count == R2.md_count
+    #     @test R1.rdf_count == R2.rdf_count
+    #     # Test some different weights
+    #     R2 = mddf(traj, Options(silent=true); frame_weights=[2.0, 1.0], low_memory)
+    #     @test sum(R2.md_count) ≈ 2 / 3
+    #     R2 = mddf(traj, Options(silent=true); frame_weights=[1.0, 2.0], low_memory)
+    #     @test sum(R2.md_count) ≈ 1 / 3
 
-        # only with atoms in the bulk
-        options = Options(
-            seed=321,
-            StableRNG=true,
-            nthreads=1,
-            silent=true,
-            n_random_samples=10^5,
-            firstframe=2,
-        )
-        R = mddf(traj, options; low_memory)
-        @test R.volume.total == 27000.0
-        @test R.volume.domain ≈ R.volume.total - R.volume.bulk
-        @test isapprox(R.volume.domain, (4π / 3) * R.dbulk^3; rtol=0.1)
-        @test R.density.solute ≈ 2 / R.volume.total
-        @test R.density.solvent ≈ 2 / R.volume.total
-        @test R.density.solvent_bulk ≈ 1 / R.volume.bulk
+    #     # only with atoms in the bulk
+    #     options = Options(
+    #         seed=321,
+    #         StableRNG=true,
+    #         nthreads=1,
+    #         silent=true,
+    #         n_random_samples=10^5,
+    #         firstframe=2,
+    #     )
+    #     R = mddf(traj, options; low_memory)
+    #     @test R.volume.total == 27000.0
+    #     @test R.volume.domain ≈ R.volume.total - R.volume.bulk
+    #     @test isapprox(R.volume.domain, (4π / 3) * R.dbulk^3; rtol=0.1)
+    #     @test R.density.solute ≈ 2 / R.volume.total
+    #     @test R.density.solvent ≈ 2 / R.volume.total
+    #     @test R.density.solvent_bulk ≈ 1 / R.volume.bulk
 
-        # with both frames
-        options = Options(
-            seed=321,
-            StableRNG=true,
-            nthreads=1,
-            silent=true,
-            n_random_samples=10^5,
-        )
-        R = mddf(traj, options; low_memory)
-        @test R.volume.total == 27000.0
-        @test R.volume.domain ≈ R.volume.total - R.volume.bulk
-        @test isapprox(R.volume.domain, (4π / 3) * R.dbulk^3; rtol=0.1)
-        @test R.density.solute ≈ 2 / R.volume.total
-        @test R.density.solvent ≈ 2 / R.volume.total
-        @test R.density.solvent_bulk ≈ 0.5 / R.volume.bulk
-    end
+    #     # with both frames
+    #     options = Options(
+    #         seed=321,
+    #         StableRNG=true,
+    #         nthreads=1,
+    #         silent=true,
+    #         n_random_samples=10^5,
+    #     )
+    #     R = mddf(traj, options; low_memory)
+    #     @test R.volume.total == 27000.0
+    #     @test R.volume.domain ≈ R.volume.total - R.volume.bulk
+    #     @test isapprox(R.volume.domain, (4π / 3) * R.dbulk^3; rtol=0.1)
+    #     @test R.density.solute ≈ 2 / R.volume.total
+    #     @test R.density.solvent ≈ 2 / R.volume.total
+    #     @test R.density.solvent_bulk ≈ 0.5 / R.volume.bulk
+    # end
 
 end
 

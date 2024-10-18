@@ -186,6 +186,7 @@ function Options(;
 end
 
 @testitem "Options" begin
+    @show "Test - Options"
     using ComplexMixtures
     o = Options()
     @test o.dbulk == 10.0

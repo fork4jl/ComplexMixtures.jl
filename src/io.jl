@@ -21,6 +21,7 @@ atoms_str(n) = "$n $(n == 1 ? "atom" : "atoms")"
 mol_str(n) = "$n $(n == 1 ? "molecule" : "molecules")"
 
 @testitem "str numbers" begin
+    @show "Test - str numbers"
     import ComplexMixtures as CM
     @test CM.atoms_str(1) == "1 atom"
     @test CM.atoms_str(2) == "2 atoms"

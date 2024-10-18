@@ -39,6 +39,7 @@ function update_md(md1::MinimumDistance, md2::MinimumDistance)
 end
 
 @testitem "update_md" begin
+    @show "Test - update_md"
     import ComplexMixtures as CM
     md1 = CM.MinimumDistance(true, 1, 2, 1.0, true, 1.0)
     md2 = CM.MinimumDistance(true, 1, 2, 0.5, true, 0.5)
@@ -186,6 +187,7 @@ function CellListMap.ParticleSystem(
 end
 
 @testitem "build ParticleSystem" begin
+    @show "Test - build ParticleSystem"
     using ComplexMixtures
     using PDBTools
     using ComplexMixtures.Testing

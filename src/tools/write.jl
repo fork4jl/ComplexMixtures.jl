@@ -199,6 +199,7 @@ function write_group_contributions(
 end
 
 @testitem "write" begin
+    @show "Test - write"
     using DelimitedFiles
     using ComplexMixtures
     using PDBTools

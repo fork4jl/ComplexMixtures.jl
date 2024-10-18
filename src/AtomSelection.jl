@@ -327,6 +327,7 @@ function AtomSelection(
 end
 
 @testitem "AtomSelection - indices" begin
+    @show "Test - AtomSelection - indices"
     using PDBTools
     using ComplexMixtures
     import Random: shuffle!
@@ -355,6 +356,7 @@ end
 end
 
 @testitem "AtomSelection - argument errors" begin
+    @show "Test - AtomSelection - argument errors"
     import ComplexMixtures
     #using ComplexMixtures: AtomSelection
     using PDBTools: select, readPDB, Select
@@ -412,6 +414,7 @@ function AtomSelection(
 end
 
 @testitem "AtomSelection Vector{PDBTools.Atom}" begin
+    @show "Test - AtomSelection Vector{PDBTools.Atom}"
     using ComplexMixtures
     using PDBTools
     import Random: shuffle!
@@ -585,6 +588,7 @@ SolventGroup(residue::PDBTools.Residue) = SolventGroup(nothing, nothing, PDBTool
 SolventGroup(atsel::AtomSelection) = SolventGroup(nothing, nothing, atsel.indices, nothing)
 
 @testitem "SoluteGroup and SolventGroup" begin
+    @show "Test - SoluteGroup and SolventGroup"
     using PDBTools: readPDB, select, name, eachresidue
     using ComplexMixtures.Testing: pdbfile
     pdb = readPDB(pdbfile)
@@ -625,7 +629,3 @@ SolventGroup(atsel::AtomSelection) = SolventGroup(nothing, nothing, atsel.indice
     atsel = AtomSelection([1,2,3], natomspermol=1)
     @test SolventGroup(atsel).atom_indices == [1,2,3]
 end
-
-
-
-

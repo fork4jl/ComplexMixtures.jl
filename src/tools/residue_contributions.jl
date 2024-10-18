@@ -337,6 +337,7 @@ ResidueContributions(result, g::Union{SoluteGroup,SolventGroup}, args...; kwargs
     _custom_group_error_for_ResidueContributions()
 
 @testitem "ResidueContribution" begin
+    @show "Test - ResidueContribution"
     using ComplexMixtures
     using PDBTools
     using ComplexMixtures.Testing: data_dir, pdbfile

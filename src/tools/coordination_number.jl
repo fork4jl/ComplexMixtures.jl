@@ -63,6 +63,7 @@ coordination_number(R::Result) = R.coordination_number
 coordination_number(R::Result, atsel::Union{SoluteGroup,SolventGroup}) = contributions(R, atsel; type = :coordination_number)
 
 @testitem "coordination_number" begin
+    @show "Test - coordination_number"
     using ComplexMixtures: coordination_number, contributions, mddf, Trajectory, Options, AtomSelection, load
     using PDBTools: readPDB, select
     using ComplexMixtures.Testing: data_dir

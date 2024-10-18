@@ -57,6 +57,7 @@ function eulermat(beta, gamma, theta)
 end
 
 @testitem "eulermat" begin
+    @show "Test - eulermat"
     using ComplexMixtures
     @test ComplexMixtures.eulermat(0.0, 0.0, 0.0) ≈ [1 0 0; 0 1 0; 0 0 1]
     @test ComplexMixtures.eulermat(π, 0.0, 0.0) ≈ [1 0 0; 0 -1 0; 0 0 -1]
@@ -80,6 +81,7 @@ function move!(x::AbstractVector{T}, newcm::T, beta, gamma, theta) where {T<:SVe
 end
 
 @testitem "move!" begin
+    @show "Test - move!"
     using ComplexMixtures
     using StaticArrays
     x = [SVector(1.0, 0.0, 0.0), SVector(0.0, 0.0, 0.0)]
@@ -140,6 +142,7 @@ function random_move!(
 end
 
 @testitem "random_move!" begin
+    @show "Test - random_move!"
     using ComplexMixtures
     using StaticArrays
     using LinearAlgebra: norm

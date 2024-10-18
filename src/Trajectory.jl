@@ -68,6 +68,7 @@ convert_unitcell(::SVector, unitcell::AbstractMatrix) = SVector{3}(unitcell[1,1]
 convert_unitcell(::SMatrix, unitcell::AbstractMatrix) = SMatrix{3,3}(unitcell)
 
 @testitem "convert_unitcell" begin
+    @show "Test - convert_unitcell"
     using ComplexMixtures: convert_unitcell
     using StaticArrays: SVector, SMatrix
     using BenchmarkTools: @benchmark
@@ -100,6 +101,7 @@ function print_unitcell(trajectory)
 end
 
 @testitem "Trajectory" begin
+    @show "Test - Trajectory"
     using ComplexMixtures
     using ComplexMixtures.Testing
     using PDBTools
@@ -228,6 +230,7 @@ function TrajectoryMetaData(trajectory::Trajectory, options::Options)
 end
 
 @testitem "TrajectoryMetaData" begin
+    @show "Test - TrajectoryMetaData"
     using ComplexMixtures
     using ComplexMixtures.Testing
     using PDBTools

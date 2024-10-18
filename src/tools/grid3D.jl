@@ -147,6 +147,7 @@ function grid3D(
 end
 
 @testitem "grid3D" begin
+    @show "Test - grid3D"
     using PDBTools
     using ComplexMixtures
     using ComplexMixtures.Testing: data_dir
@@ -197,4 +198,3 @@ end
         @test all(p -> isapprox(getproperty(first(p), property),getproperty(last(p), property),atol=1e-2), zip(grid, grid_read))
     end
 end
-

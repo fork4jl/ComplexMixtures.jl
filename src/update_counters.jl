@@ -9,6 +9,7 @@
 atom_type(iatom::Int, natomspermol::Int; first::Int = 1) = mod1(iatom - first + 1, natomspermol)
 
 @testitem "atom_type" begin
+    @show "Test - atom_type"
     using ComplexMixtures: atom_type
     @test atom_type(1, 3) == 1
     @test atom_type(4, 3) == 1

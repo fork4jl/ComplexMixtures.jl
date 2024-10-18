@@ -173,6 +173,7 @@ function Result(
 end
 
 @testitem "input: argument errors" begin
+    @show "Test - input: argument errors"
     using ComplexMixtures: mddf, Trajectory, Options, AtomSelection
     using ComplexMixtures.Testing: data_dir
     using PDBTools: readPDB, select
@@ -235,6 +236,7 @@ function sphericalshellvolume(i, step)
 end
 
 @testitem "sphericalshellvolume" begin
+    @show "Test - sphericalshellvolume"
     using ComplexMixtures: sphericalshellvolume
     @test sphericalshellvolume(1, 1.0) ≈ 4 * pi / 3
     @test sphericalshellvolume(2, 1.0) ≈ 4 * pi / 3 * (8 - 1)
@@ -253,6 +255,7 @@ function shellradius(i, step)
 end
 
 @testitem "shellradius" begin
+    @show "Test - shellradius"
     using ComplexMixtures: shellradius
     @test shellradius(1, 0.1) ≈ 0.07937005259840998
     @test shellradius(5, 0.3) ≈ 1.3664650373440481
@@ -583,6 +586,7 @@ function Base.merge(results::Vector{<:Result})
 end
 
 @testitem "merge" begin
+    @show "Test - merge"
     using ComplexMixtures: mddf, merge
     using PDBTools: readPDB, select, selindex
     using ComplexMixtures.Testing: data_dir
@@ -671,6 +675,7 @@ end
 end
 
 @testitem "Result - empty" begin
+    @show "Test - Result - empty"
     #using ComplexMixtures: Result, Trajectory, Options, AtomSelection
     using ComplexMixtures.Testing: data_dir, pdbfile
     using PDBTools: readPDB, select, name
@@ -798,6 +803,7 @@ function load(filename::String; legacy_warning = true)
 end
 
 @testitem "Result - load/save" begin
+    @show "Test - Result - load/save"
     using ComplexMixtures: load
     using ComplexMixtures.Testing: data_dir
     r1 = load("$data_dir/NAMD/protein_tmao.json")

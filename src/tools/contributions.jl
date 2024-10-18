@@ -195,6 +195,7 @@ function warning_nmols_types()
 end
 
 @testitem "contributions" begin
+    @show "Test - contributions"
     using ComplexMixtures
     using PDBTools: select, readPDB, Select
     using ComplexMixtures.Testing: data_dir
@@ -242,6 +243,7 @@ end
 end
 
 @testitem "custom group contributions" begin
+    @show "Test - custom group contributions"
     using ComplexMixtures: mddf, Trajectory, Options, AtomSelection, load,
         SoluteGroup, SolventGroup, contributions
     using PDBTools: readPDB, select, Select, iswater, chain, resnum
@@ -355,6 +357,7 @@ end
 end
 
 @testitem "shuffled indices custom group contributions" begin
+    @show "Test - shuffled indices custom group contributions"
     using ComplexMixtures: mddf, Trajectory, Options, AtomSelection, load,
         SoluteGroup, SolventGroup, contributions
     using PDBTools: readPDB, select, Select, iswater, chain, resnum

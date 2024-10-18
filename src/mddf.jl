@@ -26,6 +26,7 @@ function Buffer(trajectory::Trajectory, R::Result)
 end
 
 @testitem "Buffer" begin
+    @show "Test - Buffer"
     using ComplexMixtures
     using PDBTools
     using ComplexMixtures.Testing
@@ -438,6 +439,7 @@ function coordination_number(
 end
 
 @testitem "mddf - toy system" begin
+    @show "Test - mddf - toy system"
     using ComplexMixtures
     using PDBTools: readPDB, select
     using ComplexMixtures.Testing: data_dir
@@ -578,6 +580,7 @@ end
 end
 
 @testitem "mddf - real system" begin
+    @show "Test - mddf - real system"
     using ComplexMixtures: mddf, Trajectory, Options, AtomSelection
     using PDBTools: readPDB, select
     using ComplexMixtures.Testing: data_dir, pdbfile

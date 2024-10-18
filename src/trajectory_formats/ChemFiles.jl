@@ -160,6 +160,7 @@ function firstframe!(trajectory::ChemFile)
 end
 
 @testitem "getunitcell" begin
+    @show "Test - getunitcell"
     using ComplexMixtures
     using ComplexMixtures.Testing
     using PDBTools

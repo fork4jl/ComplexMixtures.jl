@@ -439,7 +439,7 @@ function coordination_number(
 end
 
 @testitem "mddf - toy system" begin
-    @show "Test - mddf - toy system"
+    @show "[BUG,julia#55878] - mddf - toy system"
     using ComplexMixtures
     using PDBTools: readPDB, select
     using ComplexMixtures.Testing: data_dir

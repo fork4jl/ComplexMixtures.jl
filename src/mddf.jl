@@ -444,6 +444,7 @@ end
     using PDBTools: readPDB, select
     using ComplexMixtures.Testing: data_dir
     using Random
+    @show Random.GLOBAL_SEED
 
     # Test simple three-molecule system: cross correlation
     atoms = readPDB("$data_dir/toy/cross.pdb")
@@ -452,7 +453,7 @@ end
     traj = Trajectory("$data_dir/toy/cross.pdb", protein, water, format="PDBTraj")
 
     for nthreads in [1,2], lastframe in [1, 2], low_memory in [true, false]
-        @show nthreads lastframe low_memory Random.GLOBAL_SEED;
+        @show (nthreads, lastframe, low_memory);
 
         options = Options(;
             seed=321,

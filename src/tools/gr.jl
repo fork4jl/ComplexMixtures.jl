@@ -34,9 +34,12 @@ If a Result structure is provided without further details, use the rdf count and
 gr(R::Result) = gr(R.d, R.rdf_count, R.density.solvent_bulk, R.files[1].options.binstep)
 
 @testitem "Radial distribution" begin
+    @show "[BUG,julia#55878] gr - Radial distribution"
     using ComplexMixtures: gr, mddf, Trajectory, Options, AtomSelection
     using PDBTools: readPDB, select
     using ComplexMixtures.Testing: data_dir
+    using Random
+    @show "ctx" Random.GLOBAL_SEED;
     atoms = readPDB("$data_dir/NAMD/structure.pdb")
     options = Options(seed = 321, StableRNG = true, nthreads = 1, silent = true)
     OH2 = AtomSelection(select(atoms, "water and name OH2"), natomspermol = 1)

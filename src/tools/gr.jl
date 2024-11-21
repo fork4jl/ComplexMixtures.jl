@@ -35,6 +35,8 @@ gr(R::Result) = gr(R.d, R.rdf_count, R.density.solvent_bulk, R.files[1].options.
 
 @testitem "Radial distribution" begin
     @show "gr - Radial distribution"
+    using Random
+    @show Random.GLOBAL_SEED;
     using ComplexMixtures: gr, mddf, Trajectory, Options, AtomSelection
     using PDBTools: readPDB, select
     using ComplexMixtures.Testing: data_dir

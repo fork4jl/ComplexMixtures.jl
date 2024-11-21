@@ -443,6 +443,8 @@ end
 
 @testitem "mddf - toy system" begin
     @show "mddf - toy system"
+    using Random
+    @show Random.GLOBAL_SEED;
     using ComplexMixtures
     using PDBTools: readPDB, select
     using ComplexMixtures.Testing: data_dir
@@ -454,6 +456,7 @@ end
     traj = Trajectory("$data_dir/toy/cross.pdb", protein, water, format="PDBTraj")
 
     for nthreads in [1,2], lastframe in [1, 2], low_memory in [true, false]
+        @show (nthreads, lastframe, low_memory);
         options = Options(;
             seed=321,
             StableRNG=true,

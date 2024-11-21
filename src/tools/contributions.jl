@@ -407,6 +407,9 @@ end
     using PDBTools: readPDB, select, Select, iswater, chain, resnum
     using ComplexMixtures.Testing: data_dir
     import Random: shuffle!
+    @show "mddf - shuffled indices custom group contributions"
+    using Random
+    @show Random.GLOBAL_SEED;
 
     dir = "$data_dir/NAMD"
     atoms = readPDB("$dir/structure.pdb")

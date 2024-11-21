@@ -442,6 +442,9 @@ function coordination_number(
 end
 
 @testitem "mddf - toy system" begin
+    @show "mddf - toy system"
+    using Random
+    @show Random.GLOBAL_SEED;
     using ComplexMixtures
     using PDBTools: readPDB, select
     using ComplexMixtures.Testing: data_dir
@@ -453,6 +456,7 @@ end
     traj = Trajectory("$data_dir/toy/cross.pdb", protein, water, format="PDBTraj")
 
     for nthreads in [1,2], lastframe in [1, 2], low_memory in [true, false]
+        @show (nthreads, lastframe, low_memory);
         options = Options(;
             seed=321,
             StableRNG=true,
@@ -484,6 +488,7 @@ end
     @test_throws ArgumentError mddf(traj, Options(), frame_weights=[1.0])
 
     # Self correlation
+    @show "mddf - Self correlation"
     atoms = readPDB("$data_dir/toy/self_monoatomic.pdb")
     atom = AtomSelection(select(atoms, "resname WAT and model 1"), natomspermol=1)
     traj = Trajectory("$data_dir/toy/self_monoatomic.pdb", atom, format="PDBTraj")
@@ -510,6 +515,7 @@ end
     # Test varying frame weights
     #
     # Read only first frame
+    @show "mddf - Test varying frame weights"
     for low_memory in [false, true]
         local traj
         options = Options(seed=321, StableRNG=true, nthreads=1, silent=true, lastframe=1)
